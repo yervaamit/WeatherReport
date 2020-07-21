@@ -60,12 +60,12 @@ public class NDTVWeatherTest extends BaseTest {
         int upparBoundAPI = apiTemp + apiTemp * Integer.valueOf(getValue("VariancePercent")) / 100;
         int lowerBoundAPI = apiTemp - apiTemp * Integer.valueOf(getValue("VariancePercent")) / 100;
         Assert.assertTrue(temparatureFromNDTV < upparBoundAPI && temparatureFromNDTV > lowerBoundAPI,
-                "Temperatures are not in sync");
+                "Temperature reported by NDTC is not as reported by API.");
 
         int upparBoundHumidity = apiHumidity + apiHumidity * Integer.valueOf(getValue("VariancePercent")) / 100;
         int lowerBoundHumidity = apiHumidity - apiHumidity * Integer.valueOf(getValue("VariancePercent")) / 100;
         Assert.assertTrue(humidityFromNDTV < upparBoundHumidity && humidityFromNDTV > lowerBoundHumidity,
-                "Temperatures are not in sync");
+                "NDTV reported Humidity is not as reported by API.");
 
     }
 }
