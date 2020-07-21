@@ -45,10 +45,6 @@ public class NDTVWeatherPage {
         }
     }
 
-    public WebElement getCitySelector() {
-        return citySelector;
-    }
-
     public boolean isCitySelected(String city){
         try{
             WebElement cityCheckbox = driver.findElement(By.xpath("//label[@for='" + city + "']/input"));
