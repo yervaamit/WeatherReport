@@ -44,7 +44,6 @@ public class NDTVWeatherTest extends BaseTest {
 //        String humidityFromNDTV = weatherPage.getHumidity();
 
         System.out.println("Temparature reported by NDTV: " + temparatureFromNDTV);
-
         Map<String, String> queryParameters = new HashMap<String, String>();
         queryParameters.put("q", city);
         queryParameters.put("appid", getValue("AppId"));
@@ -57,7 +56,6 @@ public class NDTVWeatherTest extends BaseTest {
 
         int upparBoundAPI = temp + temp * Integer.valueOf(getValue("VariancePercent")) / 100;
         int lowerBoundAPI = temp - temp * Integer.valueOf(getValue("VariancePercent")) / 100;
-
         Assert.assertTrue(temparatureFromNDTV < upparBoundAPI && temparatureFromNDTV > lowerBoundAPI, "Temperatures are not in sync");
 
     }
