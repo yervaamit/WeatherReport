@@ -41,7 +41,7 @@ public class NDTVWeatherTest extends BaseTest {
         weatherPage.pinCity(city);
         weatherPage.openWeatherInfoPopup(city);
         int temparatureFromNDTV = weatherPage.getTempInDegrees();
-//        String humidityFromNDTV = weatherPage.getHumidity();
+        int humidityFromNDTV = weatherPage.getHumidity();
 
         System.out.println("Temparature reported by NDTV: " + temparatureFromNDTV);
         Map<String, String> queryParameters = new HashMap<String, String>();
@@ -51,12 +51,21 @@ public class NDTVWeatherTest extends BaseTest {
         JsonPath  res = apiResponse.getResponse("/data/2.5/weather", "", queryParameters, "application/json",
                 null, APIResponse.RequestMethodType.POST).jsonPath();
 
-        int temp = (int)  (Double.parseDouble(res.getMap("main").get("temp").toString()) - 273.15); //API returns temperature in Kelvin
-        System.out.println("Temparature reported by API: " + temp);
+        int apiTemp = (int)  (Double.parseDouble(res.getMap("main").get("temp").toString()) - 273.15); //API returns temperature in Kelvin
+        int apiHumidity = Integer.parseInt(res.getMap("main").get("humidity").toString()); //API returns temperature in Kelvin
+        System.out.println("Temparature reported by API: " + apiTemp);
 
-        int upparBoundAPI = temp + temp * Integer.valueOf(getValue("VariancePercent")) / 100;
-        int lowerBoundAPI = temp - temp * Integer.valueOf(getValue("VariancePercent")) / 100;
-        Assert.assertTrue(temparatureFromNDTV < upparBoundAPI && temparatureFromNDTV > lowerBoundAPI, "Temperatures are not in sync");
+        closeAndQuitDriver();
+
+        int upparBoundAPI = apiTemp + apiTemp * Integer.valueOf(getValue("VariancePercent")) / 100;
+        int lowerBoundAPI = apiTemp - apiTemp * Integer.valueOf(getValue("VariancePercent")) / 100;
+        Assert.assertTrue(temparatureFromNDTV < upparBoundAPI && temparatureFromNDTV > lowerBoundAPI,
+                "Temperatures are not in sync");
+
+        int upparBoundHumidity = apiHumidity + apiHumidity * Integer.valueOf(getValue("VariancePercent")) / 100;
+        int lowerBoundHumidity = apiHumidity - apiHumidity * Integer.valueOf(getValue("VariancePercent")) / 100;
+        Assert.assertTrue(humidityFromNDTV < upparBoundHumidity && humidityFromNDTV > lowerBoundHumidity,
+                "Temperatures are not in sync");
 
     }
 }

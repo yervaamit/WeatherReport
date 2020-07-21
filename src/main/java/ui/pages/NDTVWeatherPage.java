@@ -5,7 +5,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import ui.utils.SeleniumUtils;
 
 import java.util.logging.Level;
@@ -21,6 +20,8 @@ public class NDTVWeatherPage {
     private WebElement citySearchBox;
     @FindBy (xpath = "//div[contains(@class, 'leaflet-popup-content-wrapper')]//span[4]/b")
     private WebElement cityTempInfoPopup;
+    @FindBy (xpath = "//div[contains(@class, 'leaflet-popup-content-wrapper')]//span[3]/b")
+    private WebElement cityHumidityInfoPopup;
     @FindBy (xpath = "//div[@class='comment_cont']")
     private WebElement citySelector;
     @FindBy (xpath = "//*[@id='map_canvas']")
@@ -73,4 +74,14 @@ public class NDTVWeatherPage {
         }
     }
 
+    public int getHumidity() {
+        try{
+            String humidityPercent = cityHumidityInfoPopup.getText().split(":")[1].trim();
+            humidityPercent = humidityPercent.substring(0, humidityPercent.indexOf("%"));
+            return Integer.parseInt(humidityPercent);
+        } catch (Exception e){
+            logger.log(Level.INFO, "Something gone wrong while reading temperature data.");
+            return 0;
+        }
+    }
 }
