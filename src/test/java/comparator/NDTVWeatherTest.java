@@ -27,7 +27,7 @@ public class NDTVWeatherTest extends BaseTest {
     }
 
     @Test
-    public void testNew() {
+    public void NDTVWeatherInfoValidator() {
         String city = getValue("City");
 
         HomePage homePage = new HomePage(driver);
