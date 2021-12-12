@@ -1,12 +1,12 @@
 package ui;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.PageLoadStrategy;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeSuite;
 
 import java.io.FileInputStream;
@@ -43,10 +43,10 @@ public class BaseTest {
         webDriverWait = new WebDriverWait(webDriver, 10);
     }
 
-    public WebDriver getDriver() {
+    public WebDriver getDriver(String url) {
         setDriver();
         webDriver.manage().window().maximize();
-        webDriver.get(getUrl());
+        webDriver.get(url);
         return webDriver;
     }
     public  WebDriverWait getWebDriverWait(){
@@ -64,6 +64,12 @@ public class BaseTest {
         }
     }
 
+    public void scrollDownByPixels(int pixels) throws InterruptedException {
+        Thread.sleep(2000);
+        JavascriptExecutor js = (JavascriptExecutor) webDriver;
+        js.executeScript("window.scrollBy(0," + pixels +")");
+    }
+
     private static String getUrl()
     {
         return getValue("URL");
@@ -79,6 +85,42 @@ public class BaseTest {
     }
     public static String getValue(String key){
         return prop.getProperty(key);
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void afterClass() {
+        if (webDriver != null){
+            StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+            logger.log(Level.INFO, "Quiting driver of : "+stackTraceElements[2].getClassName());
+            webDriver.close();
+            webDriver.quit();
+        }
+    }
+
+    public void waitForElementToBeVisible(By locator) {
+        waitForPageToLoadCompletely();
+        try {
+            webDriverWait.until(ExpectedConditions.presenceOfElementLocated(locator));
+            webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            webDriverWait.until(ExpectedConditions.elementToBeClickable(locator));
+        } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException se) {
+            waitForSomeTime(3);
+            webDriverWait.until(ExpectedConditions.presenceOfElementLocated(locator));
+            webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            webDriverWait.until(ExpectedConditions.elementToBeClickable(locator));
+        }
+    }
+    public static void waitForPageToLoadCompletely() {
+        webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*")));
+    }
+
+    public static void waitForSomeTime(int seconds) {
+        try {
+            waitForPageToLoadCompletely();
+            Thread.sleep(seconds * 1000);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
     }
 
 }

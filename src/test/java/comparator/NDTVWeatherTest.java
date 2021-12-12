@@ -22,7 +22,7 @@ public class NDTVWeatherTest extends BaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void initialize() {
-        driver = getDriver();
+        driver = getDriver("https://www.ndtv.com/");
         driverWait = getWebDriverWait();
     }
 
@@ -55,7 +55,7 @@ public class NDTVWeatherTest extends BaseTest {
         int apiHumidity = Integer.parseInt(res.getMap("main").get("humidity").toString()); //API returns temperature in Kelvin
         System.out.println("Temparature reported by API: " + apiTemp);
 
-        closeAndQuitDriver();
+//        closeAndQuitDriver();
 
         int upparBoundAPI = apiTemp + apiTemp * Integer.valueOf(getValue("VariancePercent")) / 100;
         int lowerBoundAPI = apiTemp - apiTemp * Integer.valueOf(getValue("VariancePercent")) / 100;
